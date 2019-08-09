@@ -25,3 +25,14 @@ services:
       - "3000:3000"
     depends_on:
       - db
+  counter:
+    container_name: counterapp
+    build: ./workers/counter
+    command: bash -c "cron && bundle exec puma -p 3001"
+    volumes:
+      - ./workers/counter:/app
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+      
