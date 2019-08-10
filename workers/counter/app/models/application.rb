@@ -4,7 +4,7 @@ class Application < ApplicationRecord
     def self.count_chats
         @applications = self.all
         @applications.each do |application|
-            puts "updating application #{application.name}"
+            puts "updating application #{application.name} at #{Time.now}"
             application.chats_count = application.chats.count
             application.save
         end

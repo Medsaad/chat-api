@@ -15,9 +15,14 @@ services:
     command: [--default-authentication-plugin=mysql_native_password]
     ports:
       - '3306:3306'
+
   app:
     container_name: chatapp
     build: ./app
+    deploy:
+      replicas: 3
+    stdin_open: true
+    tty: true
     command: bash -c "bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - ./app:/app
@@ -25,6 +30,8 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - elasticsearch
+
   counter:
     container_name: counterapp
     build: ./workers/counter
@@ -35,4 +42,39 @@ services:
       - "3001:3001"
     depends_on:
       - db
+
+  elasticsearch:
+    container_name: elasticsearchdb
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    environment:
+      - cluster.name=chat-cluster
+      - node.name=eschat
+      - bootstrap.memory_lock=true
+      - discovery.seed_hosts=elasticsearchdb
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./data/es:/usr/share/elasticsearch/data
+      - ./services/es/limits.conf:/etc/security/limits.conf
+    ports:
+      - 9200:9200
+
+  searcher:
+    container_name: searcherapp
+    build: ./workers/searcher
+    command: bash -c "bundle exec rails s -p 3002 -b '0.0.0.0'"
+    volumes:
+      - ./workers/searcher:/app
+    ports:
+      - "3002:3002"
+    depends_on:
+      - db
+      - elasticsearch
       
