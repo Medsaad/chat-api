@@ -12,7 +12,6 @@ RUN bundle install
 RUN useradd -ms /bin/bash admin
 
 RUN chown -R admin:admin *
-RUN rails db:migrate
 
 EXPOSE 3000
 
