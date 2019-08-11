@@ -1,10 +1,3 @@
-# Commenting for documents
-
-Created: Aug 11, 2019 11:26 AM
-Last Edited Time: Aug 11, 2019 11:51 AM
-Status: In Review 👀
-Type: Project Kickoff 🚀
-
 # Chat API
 
 This API utilizes Ruby on rails to create a chat system that lets you create and list applications, chats and messages, and the ability to search through messages
